@@ -1,8 +1,5 @@
 .grille {
     border-spacing: 0;
-    display: table-cell
-    width:33%;
-    float: left;
 }
 
 td {
@@ -23,16 +20,16 @@ td {
 .noire {
     background-color: black;
 }
-.horizontal {
-    float: center;
+
+.done {
+    text-decoration: line-through;
 }
 
-.vertical {
-    float: right;
+/*div {
+    width: 33%;
+    float: left;
 }
-
-div {
-    width:31%;
-    padding-left: 10%;
-    padding-right:10%;
-}
+.tout {
+    width: 100%;
+    float: no;
+}*/
