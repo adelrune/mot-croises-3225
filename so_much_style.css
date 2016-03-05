@@ -1,0 +1,38 @@
+.grille {
+    border-spacing: 0;
+    display: table-cell
+    width:33%;
+    float: left;
+}
+
+td {
+    padding-right: 12px;
+    text-align: center;
+}
+
+.case {
+    padding: 0;
+    border: 1px solid black;
+    width: 30px;
+    height: 30px;
+}
+.selected {
+    background-color: yellow;
+}
+
+.noire {
+    background-color: black;
+}
+.horizontal {
+    float: center;
+}
+
+.vertical {
+    float: right;
+}
+
+div {
+    width:31%;
+    padding-left: 10%;
+    padding-right:10%;
+}
