@@ -1,4 +1,4 @@
-.grille {
+#grille {
     border-spacing: 0;
 }
 
@@ -9,7 +9,7 @@ td {
 
 .case {
     padding: 0;
-    border: 1px solid black;
+    border: 1px solid gray;
     width: 30px;
     height: 30px;
 }
