@@ -13,9 +13,15 @@ td {
     width: 30px;
     height: 30px;
 }
+
+.cheater {
+    background-color: blue;
+}
+
 .selected {
     background-color: yellow;
 }
+
 
 .noire {
     background-color: black;
