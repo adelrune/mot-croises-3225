@@ -6,10 +6,14 @@ $(function(){
     $.getJSON("grille_ex.json", function(data){
         gen_grille(data);
     });
-    
+
     alert($(".case")[0]);
     $(".case").click(function(){
-        change_selection($(this));
+        if ($(this).hasClass("selected")) {
+            invert_direction();
+        } else {
+            change_selection($(this));
+        }
     });
     $(window).keypress(function(event){
         var current_selection_id = $(".selected").attr("id").split("-");
@@ -38,6 +42,8 @@ $(function(){
                     change_selection(
                         $("#" + current_selection_id[0] +
                          "-" + (+(current_selection_id[1]) + 1)));
+                default:
+                    console.log(event.keyCode);
                 break;
             }
         } else {
@@ -84,4 +90,8 @@ var gen_grille = function(data){
         });
     });
     return;
+}
+var invert_direction = function(){
+    direction[0] = +!direction[0];
+    direction[1] = +!direction[1];
 }
