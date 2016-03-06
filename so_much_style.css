@@ -18,6 +18,10 @@ td {
     background-color: blue;
 }
 
+.wrong {
+    background-color: red;
+}
+
 .selected {
     background-color: yellow;
 }

@@ -1,5 +1,6 @@
 'use strict';
 var last_case = null;
+var direction = [1, 0];
 $(function(){
 
     $.getJSON("grille_ex.json", function(data){
@@ -44,9 +45,18 @@ $(function(){
             if(clef == "?"){
                 $(".selected").text($(".selected").attr("sol"));
                 $(".selected").addClass("cheater");
+                $(".selected").removeClass("wrong");
             } else if(/[a-z]/i.test(clef)){
+                if(clef != $(".selected").attr("sol")){
+                    $(".selected").addClass("wrong");
+                } else {
+                    $(".selected").removeClass("wrong");
+                }
                 $(".selected").text(clef);
             }
+            change_selection(
+                        $("#" + (+current_selection_id[0] + direction[0]) +
+                         "-" + (+(current_selection_id[1]) + direction[1])));
         }
     });
 });
