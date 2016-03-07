@@ -3,10 +3,9 @@ var last_case = null;
 var direction = [1, 0];
 $(function(){
     $(window).keypress(function(event) {
-        // space and arrow keys
-        if($.inArray(event.keyCode, [32, 37, 38, 39, 40])) {
+        // arrows and backspace + space...
+        if(($.inArray(event.keyCode, [37, 38, 39, 40, 8]) + 1) || event.which == 32) {
             event.preventDefault();
-            console.log("prev");
         }
     });
 
@@ -48,6 +47,15 @@ var invert_direction = function(){
     direction[1] = +!direction[1];
 }
 
+var change_letter = function (cell, letter) {
+    if(letter != cell.attr("sol") && letter != ""){
+        cell.addClass("wrong");
+    } else {
+        cell.removeClass("wrong");
+    }
+    cell.text(letter);
+}
+
 var bind_events = function(){
     $(".case").click(function(){
         if ($(this).hasClass("selected")) {
@@ -57,10 +65,22 @@ var bind_events = function(){
         }
     });
     $(".case").keypress(function(event){
-        var current_selection_id = $(".selected").attr("id").split("-");
+        var current_selection_id = $(this).attr("id").split("-");
         event = event || window.event;
-        if(event.keyCode >= 37 && event.keyCode <=40){
+        if(event.keyCode >= 37 && event.keyCode <=40 || event.keyCode == 8){
             switch(event.keyCode){
+                //backspace
+                case 8:
+                    console.log($(this).text());
+                    if ($(this).text() != ""){
+                        change_letter($(this), "");
+                    } else {
+                        console.log("pass");
+                        change_selection(
+                        $("#" + (current_selection_id[0] - direction[0]) +
+                         "-" + ((current_selection_id[1]) - direction[1])));
+                    }
+                break;
                 //left
                 case 37:
                     change_selection(
@@ -89,19 +109,13 @@ var bind_events = function(){
         } else {
             var clef = String.fromCharCode(event.which).toUpperCase();
             if(clef == "?"){
-                $(".selected").text($(".selected").attr("sol"));
-                $(".selected").addClass("cheater");
-                $(".selected").removeClass("wrong");
+                change_letter($(this), $(this).attr("sol"));
+                $(this).addClass("cheater");
             } else if(clef == " ") {
                 invert_direction();
                 return;
             } else if(/[a-z]/i.test(clef)){
-                if(clef != $(".selected").attr("sol")){
-                    $(".selected").addClass("wrong");
-                } else {
-                    $(".selected").removeClass("wrong");
-                }
-                $(".selected").text(clef);
+                change_letter($(this), clef);
             }
             change_selection(
                         $("#" + (+current_selection_id[0] + direction[0]) +
