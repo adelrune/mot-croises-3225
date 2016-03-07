@@ -7,6 +7,10 @@ td {
     text-align: center;
 }
 
+td:focus{
+    outline: none;
+}
+
 .case {
     padding: 0;
     border: 1px solid gray;
