@@ -9,7 +9,7 @@ $(function(){
         }
     });
 
-    $.getJSON("grille_ex.json", function(data){
+    $.getJSON("grille_ex2.json", function(data){
         gen_grille(data);
         bind_events();
     });
@@ -34,13 +34,28 @@ function change_selection(new_select){
     select_word();
 }
 
+//why do I need this TT_TT
+function find_num() {
+    var ij = $(".selected").attr("id").split("-").map(function(e) {return +e;});
+    ij = get_word_beginning(ij[0], ij[1], direction);
+    var num = map_cells(ij, direction, function(sel) {
+        console.log(direction);
+        var orientation = (direction[0] == 1) ? "h": "v";
+        console.log(orientation);
+        return ($('.indice.' + orientation + '[num="' + sel.attr("num")).length) ? sel.attr("num"): null;
+    }).filter(function(el) {return el != null;});
+    return num[0];
+}
+
 function validate_word(){
     var ij = $(".selected").attr("id").split("-").map(function(e) {return +e;});
     ij = get_word_beginning(ij[0], ij[1], direction);
     var valid = map_cells(ij, direction, function(sel) {
         return (sel.text() == sel.attr("sol"));
     });
-    console.log(valid);
+    if ($.inArray(false, valid) == -1){
+        console.log(find_num());
+    }
 }
 
 function map_cells(ij, direction, fct) {
@@ -91,10 +106,10 @@ var gen_grille = function(data){
     data["acrossClues"].forEach(function(h_clue, i) {
         var v_clue = data["downClues"][i];
         if(v_clue){
-            $("#v-list").append('<div class="indice" num="' + (i+1) + '">' + (i+1) + '. ' + v_clue + '</li>');
+            $("#v-list").append('<div class="indice v" num="' + (i+1) + '">' + (i+1) + '. ' + v_clue + '</li>');
         }
         if(h_clue){
-            $("#h-list").append('<div class="indice" num="' + (i+1) + '">' + (i+1) + '. ' + h_clue + '</li>');
+            $("#h-list").append('<div class="indice h" num="' + (i+1) + '">' + (i+1) + '. ' + h_clue + '</li>');
         }
     });
 }

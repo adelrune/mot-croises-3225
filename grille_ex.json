@@ -72,7 +72,6 @@
   ,"Modes d'expression de la beautÃ©"
   ,null
   ,null
-  ,null
   ,"RacontÃ©"
   ,"SoulÃ¨vement"
   ,"Oiseau bigarrÃ©"
@@ -144,8 +143,7 @@
   ,"Etendue"
   ,"UnitÃ© de volume"
 ],
-"downClues":[ null
-  ,"Entier"
+"downClues":[ "Entier"
   ,"Unir"
   ,"Remua"
   ,"Vase pour les cendres"
