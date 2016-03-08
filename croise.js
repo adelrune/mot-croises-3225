@@ -15,21 +15,57 @@ $(function(){
     });
 
 });
-var change_selection = function(new_select){
+
+function change_selection(new_select){
     if (!new_select[0]) {
         return;
     }
     if (new_select.hasClass("noire")){
             return;
-        }
-        $(last_case).removeClass("selected");
-        new_select.addClass("selected");
-        new_select.focus();
-        last_case = new_select;
+    }
+    $(last_case).removeClass("selected");
+    new_select.addClass("selected");
+    var current_indice = $('.indice[num="' + new_select.attr("num") + '"]');
+    var last_indice = $('.indice[num="' + $(last_case).attr("num") + '"]');
+    current_indice.addClass("selected");
+    last_indice.removeClass("selected");
+    new_select.focus();
+    last_case = new_select;
+    select_word();
+}
+
+function get_word_beginning(i, j, direction){
+    var select = $('#' + i + '-' + j);
+    while (select.length && !select.hasClass("noire")) {
+        i-= direction[0];
+        j-= direction[1];
+        select = $('#' + i + '-' + j);
+    }
+    i+= direction[0];
+    j+= direction[1];
+    return [i, j];
+}
+
+function select_word(){
+    $(".case").each(function() {
+        $(this).removeClass("semi-selected");
+    });
+    var ij = $(".selected").attr("id").split("-");
+    ij[0] = +ij[0];
+    ij[1] = +ij[1];
+    ij = get_word_beginning(ij[0], ij[1], direction);
+    var select = $('#' + ij[0] + '-' + ij[1]);
+    console.log(ij);
+    while (select.length && !select.hasClass("noire")) {
+        select.addClass("semi-selected");
+        ij[0] += +direction[0];
+        ij[1] += +direction[1];
+        select = $('#' + ij[0] + '-' + ij[1]);
+    }
 }
 
 var gen_grille = function(data){
-    data["diagram"].forEach(function(row, j){
+    data["diagram"].forEach(function(row, j) {
         $("#grille").find("tbody").append('<tr id="row' + j + '"></tr>');
         row.split("").forEach(function(charact, i){
             var cell_html = '<td tabindex="0" id="' + i + "-" + j + '" class="case';
@@ -40,14 +76,24 @@ var gen_grille = function(data){
             $("#row" + j).append(cell_html);
         });
     });
+    data["acrossClues"].forEach(function(h_clue, i) {
+        var v_clue = data["downClues"][i];
+        if(v_clue){
+            $("#v-list").append('<div class="indice" num="' + (i+1) + '">' + (i+1) + '. ' + v_clue + '</li>');
+        }
+        if(h_clue){
+            $("#h-list").append('<div class="indice" num="' + (i+1) + '">' + (i+1) + '. ' + h_clue + '</li>');
+        }
+    });
 }
 
-var invert_direction = function(){
+function invert_direction(){
     direction[0] = +!direction[0];
     direction[1] = +!direction[1];
+    select_word();
 }
 
-var change_letter = function (cell, letter) {
+function change_letter(cell, letter) {
     if(letter != cell.attr("sol") && letter != ""){
         cell.addClass("wrong");
     } else {
@@ -56,26 +102,27 @@ var change_letter = function (cell, letter) {
     cell.text(letter);
 }
 
-var bind_events = function(){
-    $(".case").click(function(){
+function bind_events(){
+    $(".case").click(function() {
         if ($(this).hasClass("selected")) {
             invert_direction();
         } else {
             change_selection($(this));
         }
     });
-    $(".case").keypress(function(event){
+    $(".indice").click(function() {
+        change_selection($('.case[num="' + $(this).attr("num") + '"]'));
+    });
+    $(".case").keypress(function(event) {
         var current_selection_id = $(this).attr("id").split("-");
         event = event || window.event;
         if(event.keyCode >= 37 && event.keyCode <=40 || event.keyCode == 8){
             switch(event.keyCode){
                 //backspace
                 case 8:
-                    console.log($(this).text());
                     if ($(this).text() != ""){
                         change_letter($(this), "");
                     } else {
-                        console.log("pass");
                         change_selection(
                         $("#" + (current_selection_id[0] - direction[0]) +
                          "-" + ((current_selection_id[1]) - direction[1])));

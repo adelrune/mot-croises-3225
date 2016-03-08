@@ -26,10 +26,21 @@ td:focus{
     background-color: red;
 }
 
+.semi-selected {
+    background-color: lightgray;
+}
+
+.semi-selected.cheater:not(.selected) {
+    background-color: rgb(130, 130, 255);
+}
+
+.semi-selected.wrong:not(.selected) {
+    background-color: rgb(255, 130, 130);
+}
+
 .selected {
     background-color: yellow;
 }
-
 
 .noire {
     background-color: black;
