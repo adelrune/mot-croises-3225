@@ -34,34 +34,46 @@ function change_selection(new_select){
     select_word();
 }
 
-function get_word_beginning(i, j, direction){
-    var select = $('#' + i + '-' + j);
+function validate_word(){
+    var ij = $(".selected").attr("id").split("-").map(function(e) {return +e;});
+    ij = get_word_beginning(ij[0], ij[1], direction);
+    var valid = map_cells(ij, direction, function(sel) {
+        return (sel.text() == sel.attr("sol"));
+    });
+    console.log(valid);
+}
+
+function map_cells(ij, direction, fct) {
+    var select = $('#' + ij[0] + '-' + ij[1]);
+    var res = []
     while (select.length && !select.hasClass("noire")) {
-        i-= direction[0];
-        j-= direction[1];
-        select = $('#' + i + '-' + j);
+        res.push(fct(select));
+        ij[0] += +direction[0];
+        ij[1] += +direction[1];
+        select = $('#' + ij[0] + '-' + ij[1]);
     }
-    i+= direction[0];
-    j+= direction[1];
-    return [i, j];
+    return res;
+}
+
+function get_word_beginning(i, j, direction) {
+    var ij = [i, j];
+    direction = direction.map(function(e) {return -e});
+    var cells_coord = map_cells(ij, direction, function(sel) {
+        return sel.attr("id").split("-");
+    });
+    var beginning = cells_coord[cells_coord.length - 1].map(function(i) {return +i;});
+    return beginning;
 }
 
 function select_word(){
     $(".case").each(function() {
         $(this).removeClass("semi-selected");
     });
-    var ij = $(".selected").attr("id").split("-");
-    ij[0] = +ij[0];
-    ij[1] = +ij[1];
+    var ij = $(".selected").attr("id").split("-").map(function(e) {return +e;});
     ij = get_word_beginning(ij[0], ij[1], direction);
-    var select = $('#' + ij[0] + '-' + ij[1]);
-    console.log(ij);
-    while (select.length && !select.hasClass("noire")) {
-        select.addClass("semi-selected");
-        ij[0] += +direction[0];
-        ij[1] += +direction[1];
-        select = $('#' + ij[0] + '-' + ij[1]);
-    }
+    map_cells(ij, direction, function(sel) {
+        sel.addClass("semi-selected");
+    });
 }
 
 var gen_grille = function(data){
@@ -88,8 +100,7 @@ var gen_grille = function(data){
 }
 
 function invert_direction(){
-    direction[0] = +!direction[0];
-    direction[1] = +!direction[1];
+    direction = direction.map(function(e) {return +!e;});
     select_word();
 }
 
@@ -100,6 +111,7 @@ function change_letter(cell, letter) {
         cell.removeClass("wrong");
     }
     cell.text(letter);
+    validate_word();
 }
 
 function bind_events(){
