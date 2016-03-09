@@ -1,60 +1,90 @@
 'use strict';
 var last_case = null;
 var direction = [1, 0];
+var start = null;
 $(function(){
+    //Remove default behaviors of some keys.
     $(window).keypress(function(event) {
         // arrows and backspace + space...
         if(($.inArray(event.keyCode, [37, 38, 39, 40, 8]) + 1) || event.which == 32) {
             event.preventDefault();
         }
     });
-
-    $.getJSON("grille_ex2.json", function(data){
-        gen_grille(data);
-        bind_events();
+    $("select").change(function(event) {
+        $("tbody").remove();
+        $("table").append("<tbody></tbody>");
+        $(".indice").remove();
+        $.getJSON($(":selected").attr("value"), grid_ajax_callback);
     });
+    $.getJSON($(":selected").attr("value"), grid_ajax_callback);
 
 });
 
+function grid_ajax_callback(data){
+    gen_grille(data);
+    bind_events();
+    start = $.now();
+    $('#other-wrapper > *').height($('#grille').height());
+}
+
 function change_selection(new_select){
+
     if (!new_select[0]) {
         return;
     }
     if (new_select.hasClass("noire")){
             return;
     }
+
     $(last_case).removeClass("selected");
     new_select.addClass("selected");
-    var current_indice = $('.indice[num="' + new_select.attr("num") + '"]');
-    var last_indice = $('.indice[num="' + $(last_case).attr("num") + '"]');
-    current_indice.addClass("selected");
-    last_indice.removeClass("selected");
     new_select.focus();
     last_case = new_select;
+
+    change_clue_selection();
+
     select_word();
+}
+// changes the clue selection from old to new
+function change_clue_selection() {
+    var orientation = (direction[0] == 1) ? "h": "v";
+    var num = find_num();
+    $(".indice").removeClass("selected");
+    $('.indice.' + orientation + '[num="' + num + '"]').addClass("selected");
 }
 
 //why do I need this TT_TT
-function find_num() {
+function find_num(dir) {
+    dir = dir || direction;
     var ij = $(".selected").attr("id").split("-").map(function(e) {return +e;});
-    ij = get_word_beginning(ij[0], ij[1], direction);
-    var num = map_cells(ij, direction, function(sel) {
-        console.log(direction);
-        var orientation = (direction[0] == 1) ? "h": "v";
-        console.log(orientation);
+    ij = get_word_beginning(ij[0], ij[1], dir);
+    var num = map_cells(ij, dir, function(sel) {
+        var orientation = (dir[0] == 1) ? "h": "v";
         return ($('.indice.' + orientation + '[num="' + sel.attr("num")).length) ? sel.attr("num"): null;
     }).filter(function(el) {return el != null;});
     return num[0];
 }
 
-function validate_word(){
-    var ij = $(".selected").attr("id").split("-").map(function(e) {return +e;});
-    ij = get_word_beginning(ij[0], ij[1], direction);
-    var valid = map_cells(ij, direction, function(sel) {
-        return (sel.text() == sel.attr("sol"));
-    });
-    if ($.inArray(false, valid) == -1){
-        console.log(find_num());
+function validate_word() {
+    function valid(direction) {
+        var ij = $(".selected").attr("id").split("-").map(function(e) {return +e;});
+        ij = get_word_beginning(ij[0], ij[1], direction);
+        var valid = map_cells(ij, direction, function(sel) {
+            return ($("span",sel).text() == sel.attr("sol"));
+        });
+        var orientation = (direction[0] == 1) ? "h": "v";
+        var num = find_num(direction);
+        var indice = $('.indice.' + orientation + '[num="' + num + '"]');
+        if ($.inArray(false, valid) == -1){
+            indice.addClass("done");
+        } else {
+            indice.removeClass("done");
+        }
+    }
+    valid([1,0]);
+    valid([0,1]);
+    if(!$(".indice:not(.done)").length){
+        alert("félicitation, vous avez résolus la grille en "+ Math.round(($.now() - start) / 1000) + " secondes !!");
     }
 }
 
@@ -91,31 +121,35 @@ function select_word(){
     });
 }
 
-var gen_grille = function(data){
+function gen_grille(data) {
     data["diagram"].forEach(function(row, j) {
         $("#grille").find("tbody").append('<tr id="row' + j + '"></tr>');
-        row.split("").forEach(function(charact, i){
+        row.split("").forEach(function(charact, i) {
             var cell_html = '<td tabindex="0" id="' + i + "-" + j + '" class="case';
-            cell_html += (charact == ".") ? " noire\"" : "\"";
-            cell_html += (data["numbers"][j][i] != 0) ? " num=\"" + data["numbers"][j][i] + "\" " : "";
+            cell_html += (charact == ".") ? ' noire"' : '"';
+            cell_html += (data["numbers"][j][i] != 0) ? ' num="' + data["numbers"][j][i] + '" ' : '';
             cell_html += ' sol="'+data["solution"][j][i] + '" ';
-            cell_html += "></td>";
+            cell_html += "><span></span></td>";
             $("#row" + j).append(cell_html);
+            if (data["numbers"][j][i] != 0) {
+                $('#' + i + '-' + j).append('<p class="small-num">' + data["numbers"][j][i] + "</p>");
+            }
         });
     });
     data["acrossClues"].forEach(function(h_clue, i) {
         var v_clue = data["downClues"][i];
-        if(v_clue){
+        if(v_clue) {
             $("#v-list").append('<div class="indice v" num="' + (i+1) + '">' + (i+1) + '. ' + v_clue + '</li>');
         }
-        if(h_clue){
+        if(h_clue) {
             $("#h-list").append('<div class="indice h" num="' + (i+1) + '">' + (i+1) + '. ' + h_clue + '</li>');
         }
     });
 }
 
-function invert_direction(){
+function invert_direction() {
     direction = direction.map(function(e) {return +!e;});
+    change_clue_selection();
     select_word();
 }
 
@@ -125,7 +159,7 @@ function change_letter(cell, letter) {
     } else {
         cell.removeClass("wrong");
     }
-    cell.text(letter);
+    cell.find("span").text(letter);
     validate_word();
 }
 
@@ -138,6 +172,12 @@ function bind_events(){
         }
     });
     $(".indice").click(function() {
+        var ind_orient = $(this).hasClass("h") ? "h" : "v";
+        var orientation = (direction[0] == 1) ? "h": "v";
+        //Change orientation if its not the same.
+        if (!(ind_orient == orientation)){
+            invert_direction();
+        }
         change_selection($('.case[num="' + $(this).attr("num") + '"]'));
     });
     $(".case").keypress(function(event) {
@@ -147,7 +187,7 @@ function bind_events(){
             switch(event.keyCode){
                 //backspace
                 case 8:
-                    if ($(this).text() != ""){
+                    if ($("span", this).text() != ""){
                         change_letter($(this), "");
                     } else {
                         change_selection(

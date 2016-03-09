@@ -1,5 +1,19 @@
 #grille {
+    float: left;
     border-spacing: 0;
+}
+
+select {
+    margin-bottom: 30px;
+}
+
+p {
+    position: relative;
+    font-size:0.5em;
+    padding: 0;
+    margin: 0;
+    bottom: 25%;
+    float: left;
 }
 
 td {
@@ -42,6 +56,10 @@ td:focus{
     background-color: yellow;
 }
 
+.done {
+    text-decoration: line-through;
+}
+
 .noire {
     background-color: black;
 }
@@ -50,11 +68,13 @@ td:focus{
     text-decoration: line-through;
 }
 
-/*div {
-    width: 33%;
+.clue-list {
+    border: 1px solid gray;
+    width: 300px;
+    overflow: scroll;
     float: left;
 }
-.tout {
-    width: 100%;
-    float: no;
-}*/
+
+.clearfix {
+    clear: both;
+}

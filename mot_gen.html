@@ -10,17 +10,27 @@
     </head>
     <body>
         <h1>Mes génials mot croisés</h1>
-        <div>
+        <select>
+            <option value="grille_ex.json">grille 1</option>
+            <option value="grille_ex2.json">grille 2</option>
+            <option value="grille3.json">grille 3</option>
+            <option value="grille4.json">grille 4</option>
+        </select>
+        <div id="wrapper">
             <table id="grille">
                 <tbody>
                 </tbody>
             </table>
-        <div>
-        <div id="h-list">
-            <h2>Horizontal</h2>
-        </div>
-        <div id="v-list">
-            <h2>Vertical</h2>
+            <div id="other-wrapper">
+                <div id="h-list" class="clue-list">
+                    <h2>Horizontal</h2>
+                </div>
+                <div id="v-list" class="clue-list">
+                    <h2>Vertical</h2>
+                </div>
+                <br class="clearfix" />
+            </div>
+            <br class="clearfix" />
         </div>
     </body>
 </html>
