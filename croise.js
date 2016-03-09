@@ -50,7 +50,7 @@ function change_clue_selection() {
     var orientation = (direction[0] == 1) ? "h": "v";
     var num = find_num();
     $(".indice").removeClass("selected");
-    $('.indice.' + orientation + '[num="' + num + '"]').addClass("selected");
+    $('.indice.' + orientation + '[data-num="' + num + '"]').addClass("selected");
 }
 
 //why do I need this TT_TT
@@ -60,7 +60,7 @@ function find_num(dir) {
     ij = get_word_beginning(ij[0], ij[1], dir);
     var num = map_cells(ij, dir, function(sel) {
         var orientation = (dir[0] == 1) ? "h": "v";
-        return ($('.indice.' + orientation + '[num="' + sel.attr("num")).length) ? sel.attr("num"): null;
+        return ($('.indice.' + orientation + '[data-num="' + sel.data("num")).length) ? sel.data("num"): null;
     }).filter(function(el) {return el != null;});
     return num[0];
 }
@@ -74,7 +74,7 @@ function validate_word() {
         });
         var orientation = (direction[0] == 1) ? "h": "v";
         var num = find_num(direction);
-        var indice = $('.indice.' + orientation + '[num="' + num + '"]');
+        var indice = $('.indice.' + orientation + '[data-num="' + num + '"]');
         if ($.inArray(false, valid) == -1){
             indice.addClass("done");
         } else {
@@ -127,9 +127,10 @@ function gen_grille(data) {
         row.split("").forEach(function(charact, i) {
             var cell_html = '<td tabindex="0" id="' + i + "-" + j + '" class="case';
             cell_html += (charact == ".") ? ' noire"' : '"';
-            cell_html += (data["numbers"][j][i] != 0) ? ' num="' + data["numbers"][j][i] + '" ' : '';
+            cell_html += (data["numbers"][j][i] != 0) ? ' data-num="' + data["numbers"][j][i] + '" ' : '';
             cell_html += ' sol="'+data["solution"][j][i] + '" ';
             cell_html += "><span></span></td>";
+            console.log(cell_html);
             $("#row" + j).append(cell_html);
             if (data["numbers"][j][i] != 0) {
                 $('#' + i + '-' + j).append('<p class="small-num">' + data["numbers"][j][i] + "</p>");
@@ -139,10 +140,10 @@ function gen_grille(data) {
     data["acrossClues"].forEach(function(h_clue, i) {
         var v_clue = data["downClues"][i];
         if(v_clue) {
-            $("#v-list").append('<div class="indice v" num="' + (i+1) + '">' + (i+1) + '. ' + v_clue + '</li>');
+            $("#v-list").append('<div class="indice v" data-num="' + (i+1) + '">' + (i+1) + '. ' + v_clue + '</li>');
         }
         if(h_clue) {
-            $("#h-list").append('<div class="indice h" num="' + (i+1) + '">' + (i+1) + '. ' + h_clue + '</li>');
+            $("#h-list").append('<div class="indice h" data-num="' + (i+1) + '">' + (i+1) + '. ' + h_clue + '</li>');
         }
     });
 }
@@ -158,6 +159,11 @@ function change_letter(cell, letter) {
         cell.addClass("wrong");
     } else {
         cell.removeClass("wrong");
+    }
+    if(letter == "") {
+        $("p", cell).removeClass("full");
+    } else {
+        $("p", cell).addClass("full");
     }
     cell.find("span").text(letter);
     validate_word();
@@ -178,7 +184,7 @@ function bind_events(){
         if (!(ind_orient == orientation)){
             invert_direction();
         }
-        change_selection($('.case[num="' + $(this).attr("num") + '"]'));
+        change_selection($('.case[data-num="' + $(this).data("num") + '"]'));
     });
     $(".case").keypress(function(event) {
         var current_selection_id = $(this).attr("id").split("-");
