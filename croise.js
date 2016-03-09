@@ -16,6 +16,17 @@ $(function(){
         $(".indice").remove();
         $.getJSON($(":selected").attr("value"), grid_ajax_callback);
     });
+    $("button").click(function() {
+        alert("Voici un mot croisé.\n\nPour sélectionner un mot, vous pouvez cliquer sur la définition"
+        + "ou encore cliquer là ou vous voulez commencer à écrire. Bien entendu, vous pouvez effacer des lettres "
+        + "à l'aide de la touche de retour arrière. \n\n Pour changer la direction d'écriture, "
+        + "vous pouvez appuyer sur la barre espace ou encore cliquer sur la case sélectionnée (en jaune).\n\n"
+        + "Si vous êtes coincés, vous pouvez toujours écrire un '?' dans une case et celle-ci se remplira avec la "
+        + "bonne lettre. Le lutin magique javascript détectera par contre votre triche et peinturera cette case en bleu.\n\n"
+        + "Si vous avez terminés la première grille, vous pouvez en sélectionner d'autres dans le menu déroulant. "
+        + "Attention à la grille 4, elle est remplie de sous-entendus douteux."
+        + "Amusez-vous bien !");
+    })
     $.getJSON($(":selected").attr("value"), grid_ajax_callback);
 
 });
