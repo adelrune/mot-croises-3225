@@ -140,7 +140,7 @@ function gen_grille(data) {
     data["diagram"].forEach(function(row, j) {
         $("#grille").find("tbody").append('<tr id="row' + j + '"></tr>');
         row.split("").forEach(function(charact, i) {
-            var cell_html = '<td tabindex="0" id="a' + i + "a" + j + '" class="case';
+            var cell_html = '<td id="a' + i + "a" + j + '" class="case';
             cell_html += (charact == ".") ? ' noire"' : ' {';
             cell_html += (data["numbers"][j][i] != 0) ? 'num:' + data["numbers"][j][i] + ',' : '';
             cell_html += !(charact == ".") ? 'sol:\'' + data["solution"][j][i] + '\'}"' : '';
@@ -170,6 +170,7 @@ function invert_direction() {
 
 function change_letter(cell, letter) {
     if(letter != cell.metadata().sol && letter != ""){
+        console.log(cell);
         cell.addClass("wrong");
     } else {
         cell.removeClass("wrong");
@@ -224,15 +225,15 @@ function bind_events(){
         }
         change_selection(find_metadata("num", $(this).metadata("num"), $('.case')));
     });
-    $(".case").keypress(function(event) {
-        var current_selection_id = $(this).attr("id").split("a").slice(1, 3);
+    $(window).keypress(function(event) {
+        var current_selection_id = $(".selected.case").attr("id").split("a").slice(1, 3);
         event = event || window.event;
         if(event.keyCode >= 37 && event.keyCode <=40 || event.keyCode == 8){
             switch(event.keyCode){
                 //backspace
                 case 8:
-                    if ($("span", this).text() != ""){
-                        change_letter($(this), "");
+                    if ($("span", $(".selected.case")[0]).text() != ""){
+                        change_letter($(".selected.case"), "");
                     } else {
                         change_selection(
                         $('#a' + (current_selection_id[0] - direction[0]) +
@@ -267,13 +268,13 @@ function bind_events(){
         } else {
             var clef = String.fromCharCode(event.which).toUpperCase();
             if(clef == "?"){
-                change_letter($(this), $(this).metadata().sol);
-                $(this).addClass("cheater");
+                change_letter($(".selected.case"), $(".selected.case").metadata().sol);
+                $(".selected.case").addClass("cheater");
             } else if(clef == " ") {
                 invert_direction();
                 return;
             } else if(/[a-z]/i.test(clef)){
-                change_letter($(this), clef);
+                change_letter($(".selected.case"), clef);
             }
             change_selection(
                         $('#a' + (+current_selection_id[0] + direction[0]) +
