@@ -12,7 +12,7 @@
     - D Si l’usager tape une lettre qui ne correspond pas à la solution, elle s’affiche en rouge.
     - D Si l’usager tape un ? , le programme inscrit la lettre de la solution dans la case courante. La case s’affiche en bleu pour indiquer la triche et ce jusqu’à la fin du remplissage de la grille. Il n’est plus possible de modifier cette case.
     - D On peut choisir la grille à remplir via un menu et faire afficher de l’aide sur la façon de remplir la grille.
-    - La grille et les blocs de définitions devraient être fluides et se déplacer si la fenêtre n’est pas assez large pour les faire tenir une à côté de l’autre. La largeur des blocs de définitions sont fixes (300px), mais leur hauteur devrait être la même que celle de la grille.
+    - D La grille et les blocs de définitions devraient être fluides et se déplacer si la fenêtre n’est pas assez large pour les faire tenir une à côté de l’autre. La largeur des blocs de définitions sont fixes (300px), mais leur hauteur devrait être la même que celle de la grille.
     - D Il faut détecter lorsque l’usager a rempli la grille et lui indiquer le temps qu’il a pris pour y arriver.
 
 
