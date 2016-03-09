@@ -184,21 +184,6 @@ function change_letter(cell, letter) {
     validate_word();
 }
 
-//wth am i even doing.
-function metadata_to_string(el) {
-    var val = ["{"];
-    var md = el.metadata();
-    val.push(Object.keys(md).map(function(key){
-        var ret_val = [];
-        ret_val.push(key+':');
-        ret_val.push("'" + md[key] +"'");
-        return ret_val.join("");
-    }));
-    val.push("}");
-    val = val.join("");
-    return val;
-}
-
 //code sketch city.
 function find_el_with_metadata(key, value, $jqo){
     return $($jqo.map(function(i, el) {

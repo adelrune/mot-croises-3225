@@ -19,11 +19,11 @@ span {
 	position: relative;
 	margin: 0;
 	float: left;
-	margin-block-end: -30%;
 	left: 32%;
 	bottom: 16%;
 	font-family: monospace;
 	font-size: 1.4em;
+	top: 0;
 }
 
 p:not(.full) {
@@ -32,7 +32,7 @@ p:not(.full) {
 }
 
 p.full {
-	bottom: 30%;
+	bottom: 12%;
 	left: -31%;
 }
 
