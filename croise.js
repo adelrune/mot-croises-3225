@@ -12,6 +12,62 @@ $(function(){
             event.preventDefault();
         }
     });
+    $(window).keypress(function(event) {
+        var current_selection_id = $(".selected.case").attr("id").split("a").slice(1, 3);
+        event = event || window.event;
+        if(event.keyCode >= 37 && event.keyCode <=40 || event.keyCode == 8){
+            switch(event.keyCode){
+                //backspace
+                case 8:
+                    if ($("span", $(".selected.case")[0]).text() != ""){
+                        change_letter($(".selected.case"), "");
+                    } else {
+                        change_selection(
+                        $('#a' + (current_selection_id[0] - direction[0]) +
+                         "a" + ((current_selection_id[1]) - direction[1])));
+                    }
+                break;
+                //left
+                case 37:
+                    change_selection(
+                        $('#a' + (current_selection_id[0] - 1) +
+                         "a" + current_selection_id[1]) );
+                break;
+                //up
+                case 38:
+                    change_selection(
+                        $('#a' + current_selection_id[0] +
+                         "a" + (current_selection_id[1] - 1)));
+                break;
+                //right
+                case 39:
+                    change_selection(
+                        $('#a' + (+current_selection_id[0] + 1) +
+                         "a" + current_selection_id[1]));
+                break;
+                //down
+                case 40:
+                    change_selection(
+                        $('#a' + current_selection_id[0] +
+                         "a" + (+(current_selection_id[1]) + 1)));
+                    break;
+            }
+        } else {
+            var clef = String.fromCharCode(event.which).toUpperCase();
+            if(clef == "?"){
+                change_letter($(".selected.case"), $(".selected.case").metadata().sol);
+                $(".selected.case").addClass("cheater");
+            } else if(clef == " ") {
+                invert_direction();
+                return;
+            } elseÂ if(/[a-z]/i.test(clef)){
+                change_letter($(".selected.case"), clef);
+            }
+            change_selection(
+                        $('#a' + (+current_selection_id[0] + direction[0]) +
+                         "a" + (+(current_selection_id[1]) + direction[1])));
+        }
+    });
     $("#wrapper").prepend("<table id='grille'><tbody></tbody></table>");
     $("select").change(function(event) {
         $("tbody").remove();
@@ -170,7 +226,6 @@ function invert_direction() {
 
 function change_letter(cell, letter) {
     if(letter != cell.metadata().sol && letter != ""){
-        console.log(cell);
         cell.addClass("wrong");
     } else {
         cell.removeClass("wrong");
@@ -208,62 +263,6 @@ function bind_events(){
         if (!(ind_orient == orientation)){
             invert_direction();
         }
-        change_selection(find_metadata("num", $(this).metadata("num"), $('.case')));
-    });
-    $(window).keypress(function(event) {
-        var current_selection_id = $(".selected.case").attr("id").split("a").slice(1, 3);
-        event = event || window.event;
-        if(event.keyCode >= 37 && event.keyCode <=40 || event.keyCode == 8){
-            switch(event.keyCode){
-                //backspace
-                case 8:
-                    if ($("span", $(".selected.case")[0]).text() != ""){
-                        change_letter($(".selected.case"), "");
-                    } else {
-                        change_selection(
-                        $('#a' + (current_selection_id[0] - direction[0]) +
-                         "a" + ((current_selection_id[1]) - direction[1])));
-                    }
-                break;
-                //left
-                case 37:
-                    change_selection(
-                        $('#a' + (current_selection_id[0] - 1) +
-                         "a" + current_selection_id[1]) );
-                break;
-                //up
-                case 38:
-                    change_selection(
-                        $('#a' + current_selection_id[0] +
-                         "a" + (current_selection_id[1] - 1)));
-                break;
-                //right
-                case 39:
-                    change_selection(
-                        $('#a' + (+current_selection_id[0] + 1) +
-                         "a" + current_selection_id[1]));
-                break;
-                //down
-                case 40:
-                    change_selection(
-                        $('#a' + current_selection_id[0] +
-                         "a" + (+(current_selection_id[1]) + 1)));
-                    break;
-            }
-        } else {
-            var clef = String.fromCharCode(event.which).toUpperCase();
-            if(clef == "?"){
-                change_letter($(".selected.case"), $(".selected.case").metadata().sol);
-                $(".selected.case").addClass("cheater");
-            } else if(clef == " ") {
-                invert_direction();
-                return;
-            } else if(/[a-z]/i.test(clef)){
-                change_letter($(".selected.case"), clef);
-            }
-            change_selection(
-                        $('#a' + (+current_selection_id[0] + direction[0]) +
-                         "a" + (+(current_selection_id[1]) + direction[1])));
-        }
+        change_selection(find_el_with_metadata("num", $(this).metadata().num, $('.case')));
     });
 }
